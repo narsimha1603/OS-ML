@@ -1,58 +1,53 @@
 #include <stdio.h>
-#include <conio.h>
-#include <stdlib.h>
+#include <string.h>
 
-void main() {
-    int f[50], index[50], i, n, st, len, j, c, k, ind, count = 0;
-    
-    clrscr();
+struct File {
+    char name[20];
+    int nob;          // number of blocks
+    int blocks[30];   // blocks allocated to the file
+};
 
-    // Initialize all blocks as free (0)
-    for (i = 0; i < 50; i++)
-        f[i] = 0;
+int main() {
+    struct File f[30];
+    int n;
+    char search[20];
 
-x:
-    printf("Enter the index block: ");
-    scanf("%d", &ind);
+    printf("Enter no of files: ");
+    scanf("%d", &n);
 
-    if (f[ind] != 1) {
-        printf("Enter number of blocks needed and number of files for the index %d on the disk:\n", ind);
-        scanf("%d", &n);
-    } else {
-        printf("%d index is already allocated.\n", ind);
-        goto x;
+    for (int i = 0; i < n; i++) {
+        printf("\nEnter file name %d: ", i + 1);
+        scanf("%s", f[i].name);
+
+        printf("Enter no of blocks in file %d: ", i + 1);
+        scanf("%d", &f[i].nob);
+
+        printf("Enter the blocks of the file: ");
+        for (int j = 0; j < f[i].nob; j++) {
+            scanf("%d", &f[i].blocks[j]);
+        }
     }
 
-y:
-    count = 0;
-    printf("Enter the blocks for the files:\n");
-    for (i = 0; i < n; i++) {
-        scanf("%d", &index[i]);
-        if (f[index[i]] == 0)
-            count++;
+    printf("\nEnter the file name to be searched: ");
+    scanf("%s", search);
+
+    int found = 0;
+    for (int i = 0; i < n; i++) {
+        if (strcmp(f[i].name, search) == 0) {
+            found = 1;
+            printf("\nFILE NAME\tNO OF BLOCKS\tBLOCKS OCCUPIED\n");
+            printf("%s\t\t%d\t\t", f[i].name, f[i].nob);
+            for (int j = 0; j < f[i].nob; j++) {
+                printf("%d ", f[i].blocks[j]);
+            }
+            printf("\n");
+            break;
+        }
     }
 
-    if (count == n) {
-        for (j = 0; j < n; j++)
-            f[index[j]] = 1;
-
-        f[ind] = 1;  // Mark the index block as allocated
-        printf("Allocated Successfully.\n");
-        printf("File Indexed:\n");
-        for (k = 0; k < n; k++)
-            printf("%d -> %d : %d\n", ind, index[k], f[index[k]]);
-    } else {
-        printf("Some blocks in the index are already allocated.\n");
-        printf("Enter another set of file blocks.\n");
-        goto y;
+    if (!found) {
+        printf("\nFile Not Found\n");
     }
 
-    printf("Do you want to enter more files? (Yes - 1 / No - 0): ");
-    scanf("%d", &c);
-    if (c == 1)
-        goto x;
-    else
-        exit(0);
-
-    getch();
+    return 0;
 }
